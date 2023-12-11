@@ -1,0 +1,36 @@
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLE_KEY } from '../decorators/role.decorator';
+import { RoleEnum } from 'kysely-codegen';
+import { USER_KEY } from '../auth.constants';
+import { UserDto } from '../dto/user.dto';
+
+@Injectable()
+export class RoleGuard implements CanActivate {
+  constructor(private readonly refrector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const role = this.refrector.getAllAndOverride(ROLE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]) as RoleEnum;
+
+    if (!role) {
+      return true;
+    }
+
+    const request = context.switchToHttp().getRequest();
+    const user = request[USER_KEY] as UserDto;
+
+    if (user.role !== role) {
+      throw new ForbiddenException('Forbidden');
+    }
+
+    return true;
+  }
+}

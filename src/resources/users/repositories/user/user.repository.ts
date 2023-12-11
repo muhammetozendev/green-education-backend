@@ -1,16 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
-import { TransactionalRepository } from 'src/config/db/abstract-repository';
-import { DataSource, DeepPartial } from 'typeorm';
-import { AsyncLocalStorage } from 'async_hooks';
-import { IAsyncLocalStore } from 'src/config/db/types/async-local-store.interface';
+import { TransactionalRepository } from 'src/config/db/transactional-repository';
+import { DeepPartial } from 'typeorm';
 
 @Injectable()
-export class UserRepository extends TransactionalRepository<User> {
-  constructor(ds: DataSource, als: AsyncLocalStorage<IAsyncLocalStore>) {
-    super(ds, als, User);
-  }
-
+export class UserRepository extends TransactionalRepository(User) {
   async updateAndReturn(id: number, data: DeepPartial<User>): Promise<User> {
     const result = await this.getTypeOrmRepository()
       .createQueryBuilder()

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { RoleEnum } from 'kysely-codegen';
+import { RoleEnum } from '../enums/role.enum';
 
 export class UserDto {
   @Expose()
@@ -20,6 +20,6 @@ export class UserDto {
   lastName: string;
 
   @Expose()
-  @ApiProperty({ enum: ['ADMIN', 'USER'] as RoleEnum[] })
+  @ApiProperty({ enum: RoleEnum })
   role: RoleEnum;
 }

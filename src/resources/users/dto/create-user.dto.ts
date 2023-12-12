@@ -1,4 +1,13 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 
 export class CreateUserDto {
@@ -20,4 +29,8 @@ export class CreateUserDto {
 
   @IsEnum(RoleEnum)
   role: RoleEnum;
+
+  @IsNumber()
+  @IsOptional()
+  organizationId?: number;
 }

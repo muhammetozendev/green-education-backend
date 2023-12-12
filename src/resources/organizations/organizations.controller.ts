@@ -7,15 +7,19 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Role } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
-import { OrganizationsService } from './organizations.service';
+import { OrganizationsService } from './services/organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('organizations')
 @Role(RoleEnum.ADMIN)
+@ApiTags('Organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
@@ -27,6 +31,14 @@ export class OrganizationsController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.organizationsService.findOneOrFail(id);
+  }
+
+  @Get(':id/users')
+  async findUsers(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() pagination: PaginationDto,
+  ) {
+    return await this.organizationsService.findUsers(id, pagination);
   }
 
   @Post()

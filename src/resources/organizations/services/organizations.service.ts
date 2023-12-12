@@ -1,11 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { OrganizationRepository } from './repositories/organization/organization.repository';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { OrganizationRepository } from '../repositories/organization/organization.repository';
+import { CreateOrganizationDto } from '../dto/create-organization.dto';
+import { UpdateOrganizationDto } from '../dto/update-organization.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { UserService } from 'src/resources/users/services/user.service';
 
 @Injectable()
 export class OrganizationsService {
   constructor(
+    private readonly userService: UserService,
     private readonly organizationRepository: OrganizationRepository,
   ) {}
 
@@ -18,6 +21,10 @@ export class OrganizationsService {
 
   async findAll() {
     return await this.organizationRepository.find();
+  }
+
+  async findUsers(id: number, pagination: PaginationDto) {
+    return await this.userService.findUsersByOrganizationId(id, pagination);
   }
 
   async create(data: CreateOrganizationDto) {

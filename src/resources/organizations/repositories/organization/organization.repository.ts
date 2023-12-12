@@ -5,6 +5,4 @@ import { Organization } from './organization.entity';
 @Injectable()
 export class OrganizationRepository extends TransactionalRepository(
   Organization,
-) {
-  async abc() {}
-}
+) {}

@@ -6,6 +6,10 @@ import * as Joi from 'joi';
 import { AsyncLocalStorage } from 'async_hooks';
 import { User } from 'src/resources/users/repositories/user/user.entity';
 import { Session } from 'src/resources/auth/repositories/session/session.entity';
+import { Organization } from 'src/resources/organizations/repositories/organization/organization.entity';
+import { TransactionalService } from './db/transactional-service';
+import { Module as ModuleEntity } from 'src/resources/modules/repositories/module/module.entity';
+import { Submodule } from 'src/resources/modules/repositories/submodule/submodule.entity';
 
 const alsProvider: Provider = {
   provide: AsyncLocalStorage,
@@ -36,7 +40,7 @@ const alsProvider: Provider = {
         username: dbConfiguration.dbUser,
         password: dbConfiguration.dbPassword,
         database: dbConfiguration.dbName,
-        entities: [User, Session],
+        entities: [User, Session, Organization, ModuleEntity, Submodule],
         synchronize: true,
         logging: true,
       }),
@@ -44,7 +48,7 @@ const alsProvider: Provider = {
       imports: [NestConfigModule.forFeature(dbConfig)],
     }),
   ],
-  providers: [alsProvider],
-  exports: [alsProvider],
+  providers: [alsProvider, TransactionalService],
+  exports: [alsProvider, TransactionalService],
 })
 export class AppConfigModule {}

@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from 'src/resources/users/services/user/user.service';
+import { UserService } from 'src/resources/users/services/user.service';
 import { SessionRepository } from '../../repositories/session/session.repository';
 import { CreateUserDto } from 'src/resources/users/dto/create-user.dto';
 import { RegisterResDto } from '../../dto/register/register-res.dto';

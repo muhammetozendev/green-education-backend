@@ -1,6 +1,13 @@
 import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 import { Session } from 'src/resources/auth/repositories/session/session.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Organization } from 'src/resources/organizations/repositories/organization/organization.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -24,4 +31,9 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @ManyToOne(() => Organization, (org) => org.users, {
+    onDelete: 'CASCADE',
+  })
+  organization: Organization;
 }

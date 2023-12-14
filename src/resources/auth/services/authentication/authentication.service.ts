@@ -31,7 +31,7 @@ export class AuthenticationService {
 
     // Throw 401 if user not found
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Authentication failed');
     }
 
     // Compare password
@@ -42,7 +42,7 @@ export class AuthenticationService {
 
     // Throw 401 if password is invalid
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException('Authentication failed');
     }
 
     // Generate tokens

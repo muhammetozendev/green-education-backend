@@ -202,6 +202,7 @@ export function TransactionalRepository<T extends ObjectLiteral>(
       if (res.affected === 0 && error) {
         throw error;
       }
+      return res;
     }
 
     /** Upserts record(s) */
@@ -218,6 +219,7 @@ export function TransactionalRepository<T extends ObjectLiteral>(
       if (deleteResult.affected === 0 && error) {
         throw error;
       }
+      return deleteResult;
     }
 
     /** Count entities */

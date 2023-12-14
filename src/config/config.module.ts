@@ -1,6 +1,6 @@
 import { Global, Module, Provider } from '@nestjs/common';
 import { ConfigType, ConfigModule as NestConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import dbConfig from './env/db-config';
 import * as Joi from 'joi';
 import { AsyncLocalStorage } from 'async_hooks';
@@ -31,19 +31,44 @@ const alsProvider: Provider = {
         JWT_ACCESS_TOKEN_EXPIRY: Joi.number().optional(),
         JWT_REFRESH_TOKEN_EXPIRY: Joi.number().optional(),
       }).unknown(),
+      envFilePath:
+        process.env.NODE_ENV?.toLowerCase() === 'test' ? '.env.test' : '.env',
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: (dbConfiguration: ConfigType<typeof dbConfig>) => ({
-        type: 'postgres',
-        host: dbConfiguration.dbHost,
-        port: dbConfiguration.dbPort,
-        username: dbConfiguration.dbUser,
-        password: dbConfiguration.dbPassword,
-        database: dbConfiguration.dbName,
-        entities: [User, Session, Organization, ModuleEntity, Submodule],
-        synchronize: true,
-        logging: true,
-      }),
+      useFactory: (dbConfiguration: ConfigType<typeof dbConfig>) => {
+        const config = {
+          type: 'postgres',
+          host: dbConfiguration.dbHost,
+          port: dbConfiguration.dbPort,
+          username: dbConfiguration.dbUser,
+          password: dbConfiguration.dbPassword,
+          database: dbConfiguration.dbName,
+          entities: [User, Session, Organization, ModuleEntity, Submodule],
+        } as TypeOrmModuleOptions;
+
+        if (process.env.NODE_ENV?.toLowerCase() === 'development') {
+          Object.assign(config, {
+            migrations: ['dist/config/db/migrations/*.js'],
+            migrationsRun: true,
+            logging: true,
+          });
+        }
+
+        if (process.env.NODE_ENV?.toLowerCase() === 'production') {
+          Object.assign(config, {
+            migrations: ['dist/config/db/migrations/*.js'],
+            migrationsRun: true,
+          });
+        }
+
+        if (process.env.NODE_ENV?.toLowerCase() === 'test') {
+          Object.assign(config, {
+            synchronize: true,
+          });
+        }
+
+        return config;
+      },
       inject: [dbConfig.KEY],
       imports: [NestConfigModule.forFeature(dbConfig)],
     }),

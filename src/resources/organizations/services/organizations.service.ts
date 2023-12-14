@@ -4,11 +4,13 @@ import { CreateOrganizationDto } from '../dto/create-organization.dto';
 import { UpdateOrganizationDto } from '../dto/update-organization.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { UserService } from 'src/resources/users/services/user.service';
+import { ModulesService } from 'src/resources/modules/services/modules/modules.service';
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     private readonly userService: UserService,
+    private readonly modulesService: ModulesService,
     private readonly organizationRepository: OrganizationRepository,
   ) {}
 
@@ -25,6 +27,10 @@ export class OrganizationsService {
 
   async findUsers(id: number, pagination: PaginationDto) {
     return await this.userService.findUsersByOrganizationId(id, pagination);
+  }
+
+  async findModules(id: number) {
+    return await this.modulesService.getModulesByOrganization(id);
   }
 
   async create(data: CreateOrganizationDto) {

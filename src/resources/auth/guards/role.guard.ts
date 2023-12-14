@@ -18,7 +18,7 @@ export class RoleGuard implements CanActivate {
     const role = this.refrector.getAllAndOverride(ROLE_KEY, [
       context.getHandler(),
       context.getClass(),
-    ]) as RoleEnum;
+    ]) as RoleEnum[];
 
     if (!role) {
       return true;
@@ -27,7 +27,7 @@ export class RoleGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request[USER_KEY] as UserDto;
 
-    if (user.role !== role) {
+    if (!role.includes(user.role)) {
       throw new ForbiddenException('Forbidden');
     }
 

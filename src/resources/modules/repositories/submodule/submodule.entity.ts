@@ -1,10 +1,23 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Module } from '../module/module.entity';
+import { Slide } from 'src/resources/slides/repositories/slides.entity';
+import { Quiz } from 'src/resources/quizzes/repositories/quiz/quiz.entity';
 
 @Entity()
 export class Submodule {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  number: number;
 
   @Column()
   title: string;
@@ -14,7 +27,12 @@ export class Submodule {
   })
   module: Module;
 
-  // quiz
+  @OneToMany(() => Slide, (slide) => slide.submodule)
+  slides: Slide[];
 
-  // slides
+  @OneToOne(() => Quiz, (quiz) => quiz.submodule, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  quiz: Quiz;
 }

@@ -4,9 +4,10 @@ import { ModulesController } from './modules.controller';
 import { SubmodulesService } from './services/submodules/submodules.service';
 import { ModuleRepository } from './repositories/module/module.repository';
 import { SubmoduleRepository } from './repositories/submodule/submodule.repository';
+import { SubmodulesController } from './submodules.controller';
 
 @Module({
-  controllers: [ModulesController],
+  controllers: [ModulesController, SubmodulesController],
   providers: [
     ModulesService,
     SubmodulesService,

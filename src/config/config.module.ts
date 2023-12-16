@@ -10,6 +10,11 @@ import { Organization } from 'src/resources/organizations/repositories/organizat
 import { TransactionalService } from './db/transactional-service';
 import { Module as ModuleEntity } from 'src/resources/modules/repositories/module/module.entity';
 import { Submodule } from 'src/resources/modules/repositories/submodule/submodule.entity';
+import { Quiz } from 'src/resources/quizzes/repositories/quiz/quiz.entity';
+import { Question } from 'src/resources/quizzes/repositories/question/question.entity';
+import { Option } from 'src/resources/quizzes/repositories/option/option.entity';
+import { Answer } from 'src/resources/quizzes/repositories/answer/answer.entity';
+import { Slide } from 'src/resources/slides/repositories/slides.entity';
 
 const alsProvider: Provider = {
   provide: AsyncLocalStorage,
@@ -43,7 +48,18 @@ const alsProvider: Provider = {
           username: dbConfiguration.dbUser,
           password: dbConfiguration.dbPassword,
           database: dbConfiguration.dbName,
-          entities: [User, Session, Organization, ModuleEntity, Submodule],
+          entities: [
+            User,
+            Session,
+            Organization,
+            ModuleEntity,
+            Submodule,
+            Slide,
+            Quiz,
+            Question,
+            Option,
+            Answer,
+          ],
         } as TypeOrmModuleOptions;
 
         if (process.env.NODE_ENV?.toLowerCase() === 'development') {

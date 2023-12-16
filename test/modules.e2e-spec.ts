@@ -51,6 +51,8 @@ describe('Modules E2E Tests', () => {
       .expect(({ body }) => {
         expect(typeof body.id).toBe('number');
       });
+
+    await organizationRepository.delete(organization.id);
   });
 
   it('should be able to create multiple modules', async () => {
@@ -117,6 +119,8 @@ describe('Modules E2E Tests', () => {
           title: 'Module 3',
         });
       });
+
+    await organizationRepository.delete(organization.id);
   });
 
   it('should be able to delete a module without inconsistencies', async () => {
@@ -162,6 +166,8 @@ describe('Modules E2E Tests', () => {
           title: 'Module 3',
         });
       });
+
+    await organizationRepository.delete(organization.id);
   });
 
   it('should be able to update a module', async () => {
@@ -192,13 +198,8 @@ describe('Modules E2E Tests', () => {
 
     const module = await moduleRepository.findOneBy({ id: res.body.id });
     expect(module.title).toBe('Module 2');
-  });
 
-  afterEach(async () => {
-    await organizationRepository.delete({});
-    await moduleRepository.delete({});
-    await userRepository.delete({});
-    jest.resetAllMocks();
+    await organizationRepository.delete(organization.id);
   });
 
   afterAll(async () => {

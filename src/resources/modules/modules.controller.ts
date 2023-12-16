@@ -12,19 +12,23 @@ import { Transactional } from 'src/config/db/utils/transactional.decorator';
 import { ModulesService } from './services/modules/modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
+import { SubmodulesService } from './services/submodules/submodules.service';
 
 @Controller('modules')
 export class ModulesController {
-  constructor(private readonly modulesService: ModulesService) {}
-
-  //   @Get()
-  //   getModules() {
-  //     return this.modulesService.getModules();
-  //   }
+  constructor(
+    private readonly modulesService: ModulesService,
+    private readonly submodulesService: SubmodulesService,
+  ) {}
 
   @Get(':id')
   getModule(@Param('id') id: string) {
     return this.modulesService.getModuleOrFail(+1);
+  }
+
+  @Get(':id/submodules')
+  getSubmodules(@Param('id') id: string) {
+    return this.submodulesService.getSubmodulesByModule(+id);
   }
 
   @Post()

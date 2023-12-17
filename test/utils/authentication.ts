@@ -19,10 +19,12 @@ export async function authenticate(
     ['email'],
   );
 
-  const res = await request(app.getHttpServer()).post('/auth/login').send({
-    email: 'john@gmail.com',
-    password: 'password',
-  });
-
+  const res = await request(app.getHttpServer())
+    .post('/auth/login')
+    .set('Content-Type', 'application/json')
+    .send({
+      email: 'john@gmail.com',
+      password: 'password',
+    });
   return res.body.accessToken;
 }

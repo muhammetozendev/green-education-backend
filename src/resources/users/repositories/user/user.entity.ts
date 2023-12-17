@@ -1,6 +1,9 @@
 import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 import { Session } from 'src/resources/auth/repositories/session/session.entity';
 import { Organization } from 'src/resources/organizations/repositories/organization/organization.entity';
+import { ModuleProgress } from 'src/resources/progress/repositories/module-progress/module-progress.entity';
+import { SlideProgress } from 'src/resources/progress/repositories/slide-progress/slide-progress.entity';
+import { SubmoduleProgress } from 'src/resources/progress/repositories/submodule-progress/submodule-progress.entity';
 import {
   Column,
   Entity,
@@ -36,4 +39,13 @@ export class User {
     onDelete: 'CASCADE',
   })
   organization: Organization;
+
+  @OneToMany(() => SubmoduleProgress, (progress) => progress.user)
+  submoduleProgresses: SubmoduleProgress[];
+
+  @OneToMany(() => SlideProgress, (slide) => slide.user)
+  slideProgresses: SlideProgress[];
+
+  @OneToMany(() => ModuleProgress, (module) => module.user)
+  moduleProgresses: ModuleProgress[];
 }

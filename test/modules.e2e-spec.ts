@@ -1,14 +1,15 @@
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from 'src/app.module';
 import { OrganizationRepository } from 'src/resources/organizations/repositories/organization/organization.repository';
 import { ModuleRepository } from 'src/resources/modules/repositories/module/module.repository';
 import { INestApplication } from '@nestjs/common';
 import { UserRepository } from 'src/resources/users/repositories/user/user.repository';
 import { authenticate } from './utils/authentication';
-import { ModulesModule } from 'src/resources/modules/modules.module';
-import { AppConfigModule } from 'src/config/config.module';
-import { OrganizationsModule } from 'src/resources/organizations/organizations.module';
+import * as bcrypt from 'bcrypt';
+import { RoleEnum } from 'src/resources/auth/enums/role.enum';
+import { ModuleProgressRepository } from 'src/resources/progress/repositories/module-progress/module-progress.repository';
+import { randomBytes } from 'crypto';
+import { AppModule } from 'src/app.module';
 
 describe('Modules E2E Tests', () => {
   let app: INestApplication;
@@ -16,12 +17,13 @@ describe('Modules E2E Tests', () => {
   let organizationRepository: OrganizationRepository;
   let moduleRepository: ModuleRepository;
   let userRepository: UserRepository;
+  let moduleProgressRepository: ModuleProgressRepository;
 
   let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [ModulesModule, AppConfigModule, OrganizationsModule],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -30,6 +32,7 @@ describe('Modules E2E Tests', () => {
     organizationRepository = app.get(OrganizationRepository);
     moduleRepository = app.get(ModuleRepository);
     userRepository = app.get(UserRepository);
+    moduleProgressRepository = app.get(ModuleProgressRepository);
 
     accessToken = await authenticate(userRepository, app);
   });
@@ -200,6 +203,68 @@ describe('Modules E2E Tests', () => {
     expect(module.title).toBe('Module 2');
 
     await organizationRepository.delete(organization.id);
+  });
+
+  it('should be able to retrieve the modules with progress information', async () => {
+    const org = await organizationRepository.save({
+      name: 'Test organization',
+    });
+
+    const email = randomBytes(10).toString('hex');
+    const user = await userRepository.save({
+      email: email + '@gmail.com',
+      name: 'test',
+      lastName: 'test',
+      password: await bcrypt.hash('password', 12),
+      role: RoleEnum.USER,
+      organization: { id: org.id },
+    });
+
+    const authRes = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: email + '@gmail.com',
+        password: 'password',
+      });
+    const token = authRes.body.accessToken;
+
+    const modules = await moduleRepository.save([
+      {
+        number: 1,
+        title: 'Module 1',
+        organization: { id: org.id },
+      },
+      {
+        number: 2,
+        title: 'Module 2',
+        organization: { id: org.id },
+      },
+    ]);
+
+    await moduleProgressRepository.save({
+      module: { id: modules[0].id },
+      user: { id: user.id },
+    });
+
+    await request(app.getHttpServer())
+      .get(`/modules`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body[0]).toMatchObject({
+          number: 1,
+          title: 'Module 1',
+          completed: true,
+        });
+
+        expect(body[1]).toMatchObject({
+          number: 2,
+          title: 'Module 2',
+          completed: false,
+        });
+      });
+
+    await organizationRepository.delete(org.id);
   });
 
   afterAll(async () => {

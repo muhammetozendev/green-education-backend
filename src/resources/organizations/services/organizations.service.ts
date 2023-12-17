@@ -30,7 +30,7 @@ export class OrganizationsService {
   }
 
   async findModules(id: number) {
-    return await this.modulesService.getModulesByOrganization(id);
+    return await this.modulesService.findModulesByOrganization(id);
   }
 
   async create(data: CreateOrganizationDto) {

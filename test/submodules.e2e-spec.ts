@@ -7,11 +7,8 @@ import { ModuleRepository } from 'src/resources/modules/repositories/module/modu
 import { Module } from 'src/resources/modules/repositories/module/module.entity';
 import { Submodule } from 'src/resources/modules/repositories/submodule/submodule.entity';
 import { SubmoduleRepository } from 'src/resources/modules/repositories/submodule/submodule.repository';
-import { ModulesModule } from 'src/resources/modules/modules.module';
-import { UsersModule } from 'src/resources/users/users.module';
-import { AppConfigModule } from 'src/config/config.module';
 import { QuizRepository } from 'src/resources/quizzes/repositories/quiz/quiz.repository';
-import { QuizzesModule } from 'src/resources/quizzes/quizzes.module';
+import { AppModule } from 'src/app.module';
 
 describe('Submodules E2E Tests', () => {
   let app: INestApplication;
@@ -26,7 +23,7 @@ describe('Submodules E2E Tests', () => {
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [AppConfigModule, ModulesModule, UsersModule, QuizzesModule],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -60,6 +57,7 @@ describe('Submodules E2E Tests', () => {
 
     await request(app.getHttpServer())
       .get('/submodules/' + res.body.id)
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200)
       .expect(({ body }) => {
         const newBody = body as Submodule;

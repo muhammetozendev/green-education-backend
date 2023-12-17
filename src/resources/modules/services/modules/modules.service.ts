@@ -6,19 +6,29 @@ import {
 import { ModuleRepository } from '../../repositories/module/module.repository';
 import { CreateModuleDto } from '../../dto/create-module.dto';
 import { UpdateModuleDto } from '../../dto/update-module.dto';
+import { UserDto } from 'src/resources/auth/dto/user.dto';
+import { ModuleProgress } from 'src/resources/progress/repositories/module-progress/module-progress.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ModulesService {
   constructor(private readonly modulesRepository: ModuleRepository) {}
 
-  getModulesByOrganization(organizationId: number) {
+  findModulesAndProgressByOrganization(user: UserDto) {
+    return this.modulesRepository.findModulesAndProgressByOrganization(
+      user.id,
+      user.organizationId,
+    );
+  }
+
+  findModulesByOrganization(organizationId: number) {
     return this.modulesRepository.find({
       where: { organization: { id: organizationId } },
       order: { number: 'ASC' },
     });
   }
 
-  getModulesByOrganizationAndLock(organizationId: number) {
+  findModulesByOrganizationAndLock(organizationId: number) {
     return this.modulesRepository.find({
       where: { organization: { id: organizationId } },
       order: { number: 'ASC' },
@@ -26,11 +36,11 @@ export class ModulesService {
     });
   }
 
-  getModule(id: number) {
+  findModule(id: number) {
     return this.modulesRepository.findOneBy({ id });
   }
 
-  async getModuleOrFail(id: number) {
+  async findModuleOrFail(id: number) {
     const module = await this.modulesRepository.findOneBy({ id });
     if (!module) {
       throw new NotFoundException('Module not found');
@@ -38,7 +48,7 @@ export class ModulesService {
     return module;
   }
 
-  async getModuleWithOrganization(id: number) {
+  async findModuleWithOrganization(id: number) {
     return this.modulesRepository.findOne({
       where: { id },
       relations: {
@@ -63,13 +73,13 @@ export class ModulesService {
   }
 
   async updateModule(id: number, data: UpdateModuleDto) {
-    await this.getModuleOrFail(id);
+    await this.findModuleOrFail(id);
     await this.modulesRepository.update({ id }, data);
   }
 
   async deleteModule(id: number) {
-    const module = await this.getModuleWithOrganization(id);
-    await this.getModulesByOrganizationAndLock(module.organization.id);
+    const module = await this.findModuleWithOrganization(id);
+    await this.findModulesByOrganizationAndLock(module.organization.id);
     if (!module) {
       throw new NotFoundException('Module not found');
     }
@@ -84,7 +94,7 @@ export class ModulesService {
     number: number,
     organizationId: number,
   ): Promise<boolean> {
-    const modules = await this.getModulesByOrganizationAndLock(organizationId);
+    const modules = await this.findModulesByOrganizationAndLock(organizationId);
 
     if (modules.length === 0) {
       return number === 1;

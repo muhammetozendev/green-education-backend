@@ -22,4 +22,8 @@ export class UserDto {
   @Expose()
   @ApiProperty({ enum: RoleEnum })
   role: RoleEnum;
+
+  @Expose()
+  @ApiProperty()
+  organizationId: number;
 }

@@ -45,6 +45,11 @@ export function TransactionalRepository<T extends ObjectLiteral>(
       return this.als.getStore()?.entityManager ?? this.dataSource.manager;
     }
 
+    /** Execute raw query */
+    async executeRawQuery<T>(sql: string, params?: any[]): Promise<T> {
+      return this.getEntityManager().query<T>(sql, params);
+    }
+
     /** Get native typeorm repository */
     getTypeOrmRepository(): Repository<T> {
       let manager = this.getEntityManager();

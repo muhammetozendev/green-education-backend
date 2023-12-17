@@ -23,7 +23,7 @@ export class Quiz {
   submodule: Submodule;
 
   @OneToMany(() => Question, (question) => question.quiz, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   questions: Question[];
 }

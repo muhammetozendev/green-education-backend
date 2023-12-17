@@ -31,7 +31,7 @@ export class Submodule {
   slides: Slide[];
 
   @OneToOne(() => Quiz, (quiz) => quiz.submodule, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   @JoinColumn()
   quiz: Quiz;

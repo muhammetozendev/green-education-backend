@@ -50,6 +50,7 @@ export class TokenService {
         name: payload.name,
         lastName: payload.lastName,
         role: payload.role,
+        organizationId: payload.organization?.id,
       }),
       refreshToken: this.generateRefreshToken({
         userId: payload.id,

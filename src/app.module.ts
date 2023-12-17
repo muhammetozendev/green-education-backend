@@ -7,6 +7,7 @@ import { SlidesModule } from './resources/slides/slides.module';
 import { AppConfigModule } from './config/config.module';
 import { CommonModule } from './common/common.module';
 import { OrganizationsModule } from './resources/organizations/organizations.module';
+import { ProgressModule } from './resources/progress/progress.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OrganizationsModule } from './resources/organizations/organizations.mod
     SlidesModule,
     CommonModule,
     OrganizationsModule,
+    ProgressModule,
   ],
   providers: [],
 })

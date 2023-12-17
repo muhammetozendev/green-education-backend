@@ -2,9 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { TransactionalRepository } from 'src/config/db/transactional-repository';
 import { Module } from './module.entity';
 import { CreateModuleDto } from '../../dto/create-module.dto';
+import { ModuleWithProgress } from './module.types';
 
 @Injectable()
 export class ModuleRepository extends TransactionalRepository(Module) {
+  async findModulesAndProgressByOrganization(
+    userId: number,
+    organizationId: number,
+  ): Promise<ModuleWithProgress[]> {
+    return await this.getEntityManager().query(
+      `
+        SELECT 
+            "module".*, 
+            ("module"."id" in (SELECT "moduleId" FROM "module_progress" where "userId" = $1)) AS "completed" 
+        FROM "module" "module" 
+        WHERE "module"."organizationId" = $2
+        ORDER BY "module"."number" ASC;
+      `,
+      [userId, organizationId],
+    );
+  }
+
   async createAndReturn(data: CreateModuleDto): Promise<Module> {
     const result = await this.createQueryBuilder()
       .insert()

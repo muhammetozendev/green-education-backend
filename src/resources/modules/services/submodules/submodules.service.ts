@@ -6,17 +6,58 @@ import {
 import { SubmoduleRepository } from '../../repositories/submodule/submodule.repository';
 import { CreateSubmoduleDto } from '../../dto/create-submodule.dto';
 import { UpdateSubmoduleDto } from '../../dto/update-submodule.dto';
+import { ModuleRepository } from '../../repositories/module/module.repository';
+import { UserDto } from 'src/resources/auth/dto/user.dto';
+import { ModuleProgressService } from 'src/resources/progress/services/module-progress/module-progress.service';
+import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 
 @Injectable()
 export class SubmodulesService {
-  constructor(private readonly submoduleRepository: SubmoduleRepository) {}
+  constructor(
+    private readonly submoduleRepository: SubmoduleRepository,
+    private readonly moduleRepository: ModuleRepository,
+    private readonly moduleProgressService: ModuleProgressService,
+  ) {}
 
-  async getSubmodulesByModule(moduleId: number, lock?: boolean) {
+  async getSubmodulesByModule(moduleId: number, user: UserDto) {
+    // Check if module exists
+    const module = await this.moduleRepository.findOneByOrFail(
+      { id: moduleId },
+      new NotFoundException('Module not found'),
+    );
+
+    // If the user is admin, return all submodules
+    if (user.role === RoleEnum.ADMIN) {
+      return await this.submoduleRepository.find({
+        where: {
+          module: { id: moduleId },
+        },
+      });
+    }
+
+    // Else, return submodules with completed field only if user is able to access that module
+    const lastModule =
+      await this.moduleProgressService.findLastlyCompletedModule(user.id);
+
+    if (
+      (module.number !== 1 && !lastModule) ||
+      module.number - 1 >= lastModule.module.number
+    ) {
+      throw new BadRequestException('You must complete previous module first');
+    }
+
+    return await this.submoduleRepository.findSubmodulesWithProgress(
+      moduleId,
+      user.id,
+    );
+  }
+
+  async getSubmodulesByModuleAndLock(moduleId: number) {
     return this.submoduleRepository.find({
       where: {
         module: { id: moduleId },
       },
-      ...(lock && { lock: { mode: 'pessimistic_write' } }),
+      lock: { mode: 'pessimistic_write' },
     });
   }
 
@@ -74,7 +115,7 @@ export class SubmodulesService {
     moduleId: number,
     number: number,
   ): Promise<boolean> {
-    const submodules = await this.getSubmodulesByModule(moduleId, true);
+    const submodules = await this.getSubmodulesByModuleAndLock(moduleId);
     if (submodules.length === 0) {
       return number === 1;
     } else {

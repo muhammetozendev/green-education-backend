@@ -5,8 +5,10 @@ import { SubmodulesService } from './services/submodules/submodules.service';
 import { ModuleRepository } from './repositories/module/module.repository';
 import { SubmoduleRepository } from './repositories/submodule/submodule.repository';
 import { SubmodulesController } from './submodules.controller';
+import { ProgressModule } from '../progress/progress.module';
 
 @Module({
+  imports: [ProgressModule],
   controllers: [ModulesController, SubmodulesController],
   providers: [
     ModulesService,

@@ -5,9 +5,9 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { Transactional } from 'src/config/db/utils/transactional.decorator';
 import { ModulesService } from './services/modules/modules.service';
@@ -18,7 +18,6 @@ import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { UserDto } from '../auth/dto/user.dto';
 import { Role } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
-import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('modules')
 export class ModulesController {
@@ -34,22 +33,27 @@ export class ModulesController {
   }
 
   @Get(':id')
-  getModule(@Param('id') id: string) {
-    return this.modulesService.findModuleOrFail(+1);
+  getModule(
+    @Param('id', ParseIntPipe) id: number,
+    @ActiveUser() user: UserDto,
+  ) {
+    return this.modulesService.findModule(id, user);
   }
 
   @Get(':id/submodules')
-  getSubmodules(@Param('id') id: string) {
-    return this.submodulesService.getSubmodulesByModule(+id);
+  getSubmodules(@Param('id') id: string, @ActiveUser() user: UserDto) {
+    return this.submodulesService.getSubmodulesByModule(+id, user);
   }
 
   @Post()
+  @Role(RoleEnum.ADMIN)
   @Transactional()
   createModule(@Body() body: CreateModuleDto) {
     return this.modulesService.createModule(body);
   }
 
   @Patch(':id')
+  @Role(RoleEnum.ADMIN)
   @HttpCode(204)
   async updateModule(@Param('id') id: string, @Body() body: UpdateModuleDto) {
     await this.modulesService.updateModule(+id, body);
@@ -57,6 +61,7 @@ export class ModulesController {
 
   @Delete(':id')
   @HttpCode(204)
+  @Role(RoleEnum.ADMIN)
   @Transactional()
   async deleteModule(@Param('id') id: string) {
     await this.modulesService.deleteModule(+id);

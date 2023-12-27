@@ -21,6 +21,5 @@ import { ProgressModule } from './resources/progress/progress.module';
     OrganizationsModule,
     ProgressModule,
   ],
-  providers: [],
 })
 export class AppModule {}

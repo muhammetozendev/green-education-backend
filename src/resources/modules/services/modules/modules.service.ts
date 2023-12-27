@@ -7,12 +7,15 @@ import { ModuleRepository } from '../../repositories/module/module.repository';
 import { CreateModuleDto } from '../../dto/create-module.dto';
 import { UpdateModuleDto } from '../../dto/update-module.dto';
 import { UserDto } from 'src/resources/auth/dto/user.dto';
-import { ModuleProgress } from 'src/resources/progress/repositories/module-progress/module-progress.entity';
-import { DataSource } from 'typeorm';
+import { RoleEnum } from 'src/resources/auth/enums/role.enum';
+import { ModuleProgressService } from 'src/resources/progress/services/module-progress/module-progress.service';
 
 @Injectable()
 export class ModulesService {
-  constructor(private readonly modulesRepository: ModuleRepository) {}
+  constructor(
+    private readonly modulesRepository: ModuleRepository,
+    private readonly moduleProgressService: ModuleProgressService,
+  ) {}
 
   findModulesAndProgressByOrganization(user: UserDto) {
     return this.modulesRepository.findModulesAndProgressByOrganization(
@@ -36,16 +39,23 @@ export class ModulesService {
     });
   }
 
-  findModule(id: number) {
-    return this.modulesRepository.findOneBy({ id });
+  async findModule(id: number, user: UserDto) {
+    const module = await this.findModuleOrFail(id);
+    if (user.role === RoleEnum.ADMIN) {
+      return module;
+    }
+    const isComplete = await this.moduleProgressService.isModuleComplete(
+      id,
+      user.id,
+    );
+    return { ...module, isComplete: !!isComplete };
   }
 
   async findModuleOrFail(id: number) {
-    const module = await this.modulesRepository.findOneBy({ id });
-    if (!module) {
-      throw new NotFoundException('Module not found');
-    }
-    return module;
+    return await this.modulesRepository.findOneByOrFail(
+      { id },
+      new NotFoundException('Module not found'),
+    );
   }
 
   async findModuleWithOrganization(id: number) {

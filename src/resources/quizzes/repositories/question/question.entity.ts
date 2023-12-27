@@ -22,7 +22,9 @@ export class Question {
   })
   quiz: Quiz;
 
-  @OneToMany(() => Option, (question) => question.question)
+  @OneToMany(() => Option, (question) => question.question, {
+    cascade: true,
+  })
   options: Option[];
 
   @OneToMany(() => Answer, (answer) => answer.question)

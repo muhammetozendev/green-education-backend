@@ -37,3 +37,4 @@ lerna-debug.log*
 .env*
 docker_commands.sh
 src/migrations.ts
+src/test.ts

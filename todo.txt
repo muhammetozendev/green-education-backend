@@ -1,1 +1,5 @@
-Only mark the module as completed when all the slides and quizzes are completed
+Only allow quizzes to be reviewed if it's not attempted before and all the slides of given module are completed
+
+Fix swagger docs
+
+Slide endpoints

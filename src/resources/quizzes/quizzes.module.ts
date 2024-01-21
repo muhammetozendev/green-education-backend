@@ -6,6 +6,7 @@ import { QuizzesController } from './quizzes.controller';
 import { QuestionRepository } from './repositories/question/question.repository';
 import { OptionRepository } from './repositories/option/option.repository';
 import { AnswerRepository } from './repositories/answer/answer.repository';
+import { AttemptRepository } from './repositories/attempt/attempt.repository';
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { AnswerRepository } from './repositories/answer/answer.repository';
     QuestionRepository,
     OptionRepository,
     AnswerRepository,
+    AttemptRepository,
   ],
   controllers: [QuizzesController],
 })

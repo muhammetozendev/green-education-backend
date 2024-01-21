@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { SlideRepository } from './repositories/slide.repository';
 
-@Module({})
+@Module({
+  providers: [SlideRepository],
+})
 export class SlidesModule {}

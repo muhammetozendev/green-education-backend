@@ -57,9 +57,14 @@ export class QuestionsService {
     await this.questionRepository.delete(question.id);
   }
 
-  async answerQuestion(questionId: number, optionId: number, userId: number) {
+  async answerQuestion(
+    quizId: number,
+    questionId: number,
+    optionId: number,
+    userId: number,
+  ) {
     const question = await this.questionRepository.findOne({
-      where: { id: questionId },
+      where: { id: questionId, quiz: { id: quizId } },
       relations: { options: true },
     });
     if (!question) {

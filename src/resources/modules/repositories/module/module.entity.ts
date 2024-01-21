@@ -2,11 +2,14 @@ import { Organization } from 'src/resources/organizations/repositories/organizat
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Submodule } from '../submodule/submodule.entity';
+import { Quiz } from 'src/resources/quizzes/repositories/quiz/quiz.entity';
 
 @Entity()
 export class Module {
@@ -26,4 +29,8 @@ export class Module {
 
   @OneToMany(() => Submodule, (submodule) => submodule.module)
   submodules: Submodule[];
+
+  @OneToOne(() => Quiz, (quiz) => quiz.module)
+  @JoinColumn()
+  quiz: Quiz;
 }

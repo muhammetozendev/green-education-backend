@@ -14,10 +14,12 @@ import { Quiz } from 'src/resources/quizzes/repositories/quiz/quiz.entity';
 import { Question } from 'src/resources/quizzes/repositories/question/question.entity';
 import { Option } from 'src/resources/quizzes/repositories/option/option.entity';
 import { Answer } from 'src/resources/quizzes/repositories/answer/answer.entity';
-import { Slide } from 'src/resources/slides/repositories/slides.entity';
+import { Slide } from 'src/resources/slides/repositories/slide.entity';
 import { ModuleProgress } from 'src/resources/progress/repositories/module-progress/module-progress.entity';
 import { SlideProgress } from 'src/resources/progress/repositories/slide-progress/slide-progress.entity';
 import { SubmoduleProgress } from 'src/resources/progress/repositories/submodule-progress/submodule-progress.entity';
+import { Attempt } from 'src/resources/quizzes/repositories/attempt/attempt.entity';
+import { QuizProgress } from 'src/resources/progress/repositories/quiz-progress/quiz-progress.entity';
 
 const alsProvider: Provider = {
   provide: AsyncLocalStorage,
@@ -65,6 +67,8 @@ const alsProvider: Provider = {
             SlideProgress,
             SubmoduleProgress,
             ModuleProgress,
+            QuizProgress,
+            Attempt,
           ],
         } as TypeOrmModuleOptions;
 

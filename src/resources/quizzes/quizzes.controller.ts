@@ -15,10 +15,17 @@ import { UpdateQuizDto } from './dto/quiz/update-quiz.dto';
 import { Role } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Transactional } from 'src/config/db/utils/transactional.decorator';
+import { ActiveUser } from '../auth/decorators/active-user.decorator';
+import { UserDto } from '../auth/dto/user.dto';
+import { QuestionsService } from './services/questions/questions.service';
 
 @Controller('quizzes')
 export class QuizzesController {
-  constructor(private readonly quizzesService: QuizzesService) {}
+  constructor(
+    private readonly quizzesService: QuizzesService,
+    private readonly questionsService: QuestionsService,
+  ) {}
 
   @Get(':id')
   @Role(RoleEnum.ADMIN)
@@ -27,6 +34,7 @@ export class QuizzesController {
   }
 
   @Get()
+  @Role(RoleEnum.ADMIN)
   async getQuizzes(@Query() pagination: PaginationDto) {
     return await this.quizzesService.getQuizzes(
       pagination.limit,
@@ -53,5 +61,42 @@ export class QuizzesController {
   @Role(RoleEnum.ADMIN)
   async deleteQuiz(@Param('id', ParseIntPipe) id: number) {
     return await this.quizzesService.deleteQuiz(id);
+  }
+
+  @Get(':id/questions')
+  async getQuestions(
+    @Param('id', ParseIntPipe) quizId: number,
+    @ActiveUser() user: UserDto,
+  ) {
+    /* TODO: GET QUESTIONS
+        - Only allow users to get questions if they have access to the quiz
+        - Admins can get questions for any quiz
+    */
+  }
+
+  @Post(':id/questions/:questionId/answer/:optionId')
+  @Role(RoleEnum.USER)
+  async answerQuestion(
+    @Param('id', ParseIntPipe) quizId: number,
+    @Param('questionId', ParseIntPipe) questionId: number,
+    @Param('optionId', ParseIntPipe) optionId: number,
+    @ActiveUser() user: UserDto,
+  ) {
+    return await this.questionsService.answerQuestion(
+      quizId,
+      questionId,
+      optionId,
+      user.id,
+    );
+  }
+
+  @Post(':id/submit')
+  @Transactional()
+  @Role(RoleEnum.USER)
+  async submitQuiz(
+    @Param('id', ParseIntPipe) quizId: number,
+    @ActiveUser() user: UserDto,
+  ) {
+    return await this.quizzesService.submitQuiz(user.id, quizId);
   }
 }

@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Question } from '../question/question.entity';
 import { Submodule } from 'src/resources/modules/repositories/submodule/submodule.entity';
+import { Attempt } from '../attempt/attempt.entity';
+import { Module } from 'src/resources/modules/repositories/module/module.entity';
 
 @Entity()
 export class Quiz {
@@ -26,4 +28,10 @@ export class Quiz {
     onDelete: 'SET NULL',
   })
   questions: Question[];
+
+  @OneToMany(() => Attempt, (attempt) => attempt.quiz)
+  attempts: Attempt[];
+
+  @OneToOne(() => Module, (attempt) => attempt.quiz)
+  module: Module;
 }

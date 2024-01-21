@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Module } from '../module/module.entity';
-import { Slide } from 'src/resources/slides/repositories/slides.entity';
+import { Slide } from 'src/resources/slides/repositories/slide.entity';
 import { Quiz } from 'src/resources/quizzes/repositories/quiz/quiz.entity';
 
 @Entity()

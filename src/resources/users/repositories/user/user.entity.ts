@@ -4,6 +4,7 @@ import { Organization } from 'src/resources/organizations/repositories/organizat
 import { ModuleProgress } from 'src/resources/progress/repositories/module-progress/module-progress.entity';
 import { SlideProgress } from 'src/resources/progress/repositories/slide-progress/slide-progress.entity';
 import { SubmoduleProgress } from 'src/resources/progress/repositories/submodule-progress/submodule-progress.entity';
+import { Attempt } from 'src/resources/quizzes/repositories/attempt/attempt.entity';
 import {
   Column,
   Entity,
@@ -48,4 +49,7 @@ export class User {
 
   @OneToMany(() => ModuleProgress, (module) => module.user)
   moduleProgresses: ModuleProgress[];
+
+  @OneToMany(() => Attempt, (attempt) => attempt.user)
+  attempts: Attempt[];
 }

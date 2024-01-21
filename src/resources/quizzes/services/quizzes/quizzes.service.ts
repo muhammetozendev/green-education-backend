@@ -1,9 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QuizRepository } from '../../repositories/quiz/quiz.repository';
+import { AnswerRepository } from '../../repositories/answer/answer.repository';
+import { AttemptRepository } from '../../repositories/attempt/attempt.repository';
 
 @Injectable()
 export class QuizzesService {
-  constructor(private readonly quizRepository: QuizRepository) {}
+  constructor(
+    private readonly quizRepository: QuizRepository,
+    private readonly answerRepository: AnswerRepository,
+    private readonly attemptRepository: AttemptRepository,
+  ) {}
 
   async getQuizzes(limit: number, page: number) {
     return await this.quizRepository.find({
@@ -49,5 +55,46 @@ export class QuizzesService {
       throw new NotFoundException('Quiz not found');
     }
     await this.quizRepository.delete(quiz.id);
+  }
+
+  async submitQuiz(userId: number, quizId: number) {
+    const quiz = await this.quizRepository.findOne({
+      where: { id: quizId },
+      relations: { questions: { options: true } },
+    });
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+    const answers = await this.answerRepository.find({
+      where: { user: { id: userId }, question: { quiz: { id: quizId } } },
+    });
+
+    // Calculate the score
+    const total = quiz.questions.length;
+    const correct = answers.filter((answer) => answer.isCorrect).length;
+    const incorrect = answers.filter(
+      (answer) => answer.isCorrect === false,
+    ).length;
+    const skipped = total - (correct + incorrect);
+    const score = Math.round((correct / total) * 100);
+
+    // Save the attempt for the quiz
+    const results = await this.attemptRepository.save({
+      total,
+      correct,
+      incorrect,
+      skipped,
+      score,
+      user: { id: userId },
+      quiz: { id: quizId },
+    });
+
+    // Remove all answers for this quiz
+    await this.answerRepository.delete({
+      user: { id: userId },
+      question: { quiz: { id: quizId } },
+    });
+
+    return results;
   }
 }

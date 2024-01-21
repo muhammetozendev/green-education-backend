@@ -1,4 +1,4 @@
-import { Slide } from 'src/resources/slides/repositories/slides.entity';
+import { Slide } from 'src/resources/slides/repositories/slide.entity';
 import { User } from 'src/resources/users/repositories/user/user.entity';
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 

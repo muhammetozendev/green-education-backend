@@ -3,3 +3,7 @@ Only allow quizzes to be reviewed if it's not attempted before and all the slide
 Fix swagger docs
 
 Slide endpoints
+
+canTakeQuiz
+  - ckeck slides if its submodule
+  - ckeck submodules if its module

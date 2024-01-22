@@ -7,8 +7,10 @@ import { QuestionRepository } from './repositories/question/question.repository'
 import { OptionRepository } from './repositories/option/option.repository';
 import { AnswerRepository } from './repositories/answer/answer.repository';
 import { AttemptRepository } from './repositories/attempt/attempt.repository';
+import { ProgressModule } from '../progress/progress.module';
 
 @Module({
+  imports: [ProgressModule],
   providers: [
     QuizRepository,
     QuizzesService,

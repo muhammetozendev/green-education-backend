@@ -68,10 +68,7 @@ export class QuizzesController {
     @Param('id', ParseIntPipe) quizId: number,
     @ActiveUser() user: UserDto,
   ) {
-    /* TODO: GET QUESTIONS
-        - Only allow users to get questions if they have access to the quiz
-        - Admins can get questions for any quiz
-    */
+    return await this.quizzesService.getQuestions(quizId, user);
   }
 
   @Post(':id/questions/:questionId/answer/:optionId')
@@ -97,6 +94,6 @@ export class QuizzesController {
     @Param('id', ParseIntPipe) quizId: number,
     @ActiveUser() user: UserDto,
   ) {
-    return await this.quizzesService.submitQuiz(user.id, quizId);
+    return await this.quizzesService.submitQuiz(user, quizId);
   }
 }

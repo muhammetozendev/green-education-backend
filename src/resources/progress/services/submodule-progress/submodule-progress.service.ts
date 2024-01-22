@@ -7,10 +7,15 @@ import { SubmoduleProgressRepository } from '../../repositories/submodule-progre
 import { SlideProgressRepository } from '../../repositories/slide-progress/slide-progress.repository';
 import { SubmoduleRepository } from '../../repositories/submodule/submodule.repository';
 import { QuizProgressRepository } from '../../repositories/quiz-progress/quiz-progress.repository';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { Module } from 'src/resources/modules/repositories/module/module.entity';
 
 @Injectable()
 export class SubmoduleProgressService {
   constructor(
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
     private readonly submoduleProgressRepository: SubmoduleProgressRepository,
     private readonly slideProgressRepository: SlideProgressRepository,
     private readonly submoduleRepository: SubmoduleRepository,
@@ -78,5 +83,27 @@ export class SubmoduleProgressService {
       submodule: { id: submodule.id },
       user: { id: userId },
     });
+  }
+
+  async areSubmodulesComplete(moduleId: number, userId: number) {
+    const submodules = await this.submoduleProgressRepository.find({
+      where: {
+        submodule: { module: { id: moduleId } },
+        user: { id: userId },
+      },
+      relations: { submodule: true },
+    });
+
+    const module = await this.entityManager.findOne(Module, {
+      where: { id: moduleId },
+      relations: { submodules: true },
+    });
+    if (!module) {
+      throw new BadRequestException('Module not found');
+    }
+
+    return module.submodules.every((submodule) =>
+      submodules.some((s) => s.submodule.id === submodule.id),
+    );
   }
 }

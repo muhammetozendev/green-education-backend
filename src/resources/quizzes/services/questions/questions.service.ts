@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateQuestionDto } from '../../dto/question/create-question.dto';
+import { CreateQuestionDto2 } from '../../dto/question/create-question.dto';
 import { QuestionRepository } from '../../repositories/question/question.repository';
 import { OptionRepository } from '../../repositories/option/option.repository';
 import { OptionDto } from '../../dto/option/option.dto';
@@ -14,7 +14,7 @@ export class QuestionsService {
     private readonly answerRepository: AnswerRepository,
   ) {}
 
-  async createQuestion(data: CreateQuestionDto) {
+  async createQuestion(data: CreateQuestionDto2) {
     const options = await this.createOptions(data.options);
     return await this.questionRepository.save({
       question: data.question,

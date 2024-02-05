@@ -38,11 +38,12 @@ export class OrganizationsService {
   }
 
   async update(id: number, data: UpdateOrganizationDto) {
-    return await this.organizationRepository.update(
-      id,
-      data,
-      new NotFoundException('Organization not found'),
-    );
+    if (data.name)
+      return await this.organizationRepository.update(
+        id,
+        data,
+        new NotFoundException('Organization not found'),
+      );
   }
 
   async delete(id: number) {

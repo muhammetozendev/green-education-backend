@@ -6,9 +6,10 @@ import { ModuleRepository } from './repositories/module/module.repository';
 import { SubmoduleRepository } from './repositories/submodule/submodule.repository';
 import { SubmodulesController } from './submodules.controller';
 import { ProgressModule } from '../progress/progress.module';
+import { SlidesModule } from '../slides/slides.module';
 
 @Module({
-  imports: [ProgressModule],
+  imports: [ProgressModule, SlidesModule],
   controllers: [ModulesController, SubmodulesController],
   providers: [
     ModulesService,

@@ -17,6 +17,10 @@ export class ModulesService {
     private readonly moduleProgressService: ModuleProgressService,
   ) {}
 
+  findAllModules() {
+    return this.modulesRepository.find();
+  }
+
   findModulesAndProgressByOrganization(user: UserDto) {
     return this.modulesRepository.findModulesAndProgressByOrganization(
       user.id,

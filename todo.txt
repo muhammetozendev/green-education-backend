@@ -4,6 +4,3 @@ Fix swagger docs
 
 Slide endpoints
 
-canTakeQuiz
-  - ckeck slides if its submodule
-  - ckeck submodules if its module

@@ -10,7 +10,7 @@ import {
 import { OptionDto } from '../option/option.dto';
 import { Type } from 'class-transformer';
 
-export class CreateQuestionDto {
+export class CreateQuestionDto2 {
   @IsString()
   @IsNotEmpty()
   question: string;
@@ -21,7 +21,18 @@ export class CreateQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => OptionDto)
   @IsArray()
-  @ArrayMinSize(4)
-  @ArrayMaxSize(4)
+  @ArrayMinSize(2)
+  options: OptionDto[];
+}
+
+export class CreateQuestionDto {
+  @IsString()
+  @IsNotEmpty()
+  question: string;
+
+  @ValidateNested({ each: true })
+  @Type(() => OptionDto)
+  @IsArray()
+  @ArrayMinSize(2)
   options: OptionDto[];
 }

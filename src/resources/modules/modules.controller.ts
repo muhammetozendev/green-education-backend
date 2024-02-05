@@ -26,10 +26,16 @@ export class ModulesController {
     private readonly submodulesService: SubmodulesService,
   ) {}
 
-  @Get()
+  @Get('user-modules')
   @Role(RoleEnum.USER)
   getModules(@ActiveUser() user: UserDto) {
     return this.modulesService.findModulesAndProgressByOrganization(user);
+  }
+
+  @Get()
+  @Role(RoleEnum.ADMIN)
+  getAllModules() {
+    return this.modulesService.findAllModules();
   }
 
   @Get(':id')

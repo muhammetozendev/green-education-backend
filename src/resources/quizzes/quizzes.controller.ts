@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -28,9 +29,12 @@ export class QuizzesController {
   ) {}
 
   @Get(':id')
-  @Role(RoleEnum.ADMIN)
   async getQuizById(@Param('id', ParseIntPipe) id: number) {
-    return await this.quizzesService.getQuizById(id);
+    const quiz = await this.quizzesService.getQuizById(id);
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+    return quiz;
   }
 
   @Get()
@@ -45,7 +49,7 @@ export class QuizzesController {
   @Post()
   @Role(RoleEnum.ADMIN)
   async createQuiz(@Body() body: CreateQuizDto) {
-    return await this.quizzesService.createQuiz(body.title);
+    return await this.quizzesService.createQuiz(body);
   }
 
   @Patch(':id')

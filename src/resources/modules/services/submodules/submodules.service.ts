@@ -72,7 +72,26 @@ export class SubmodulesService {
     });
   }
 
+  async getSubmoduleForUser(id: number, userId: number) {
+    return await this.submoduleRepository.find({
+      where: {
+        id,
+        module: {
+          organization: {
+            users: {
+              id: userId,
+            },
+          },
+        },
+      },
+    });
+  }
+
   async createSubmodule(data: CreateSubmoduleDto) {
+    await this.moduleRepository.findOneByOrFail(
+      { id: data.moduleId },
+      new NotFoundException('Module not found'),
+    );
     const isValid = await this.validateSubmoduleNumber(
       data.moduleId,
       data.number,

@@ -12,11 +12,16 @@ import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 import { SubmoduleProgressService } from 'src/resources/progress/services/submodule-progress/submodule-progress.service';
 import { Quiz } from '../../repositories/quiz/quiz.entity';
 import { SlideProgressService } from 'src/resources/progress/services/slide-progress/slide-progress.service';
+import { CreateQuizDto } from '../../dto/quiz/create-quiz.dto';
+import { QuestionRepository } from '../../repositories/question/question.repository';
+import { OptionRepository } from '../../repositories/option/option.repository';
 
 @Injectable()
 export class QuizzesService {
   constructor(
     private readonly quizRepository: QuizRepository,
+    private readonly questionRepository: QuestionRepository,
+    private readonly optionRepository: OptionRepository,
     private readonly submoduleProgressService: SubmoduleProgressService,
     private readonly slideProgressService: SlideProgressService,
     private readonly answerRepository: AnswerRepository,
@@ -31,9 +36,21 @@ export class QuizzesService {
     });
   }
 
-  async createQuiz(title: string) {
+  async createQuiz(data: CreateQuizDto) {
+    const questions = data.questions.map((q) => {
+      return this.questionRepository.create({
+        question: q.question,
+        options: q.options.map((o) => {
+          return this.optionRepository.create({
+            isCorrect: o.isCorrect,
+            option: o.option,
+          });
+        }),
+      });
+    });
     return await this.quizRepository.save({
-      title: title,
+      title: data.title,
+      questions: questions,
     });
   }
 

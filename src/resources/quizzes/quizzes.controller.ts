@@ -20,8 +20,10 @@ import { Transactional } from 'src/config/db/utils/transactional.decorator';
 import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { UserDto } from '../auth/dto/user.dto';
 import { QuestionsService } from './services/questions/questions.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('quizzes')
+@ApiTags('Quizzes')
 export class QuizzesController {
   constructor(
     private readonly quizzesService: QuizzesService,

@@ -19,8 +19,10 @@ import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { UserDto } from '../auth/dto/user.dto';
 import { SlidesService } from '../slides/services/slides.service';
 import { CreateSlideDto } from '../slides/dto/create-slide.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('submodules')
+@ApiTags('Submodules')
 export class SubmodulesController {
   constructor(
     private readonly submodulesService: SubmodulesService,

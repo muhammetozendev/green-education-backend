@@ -18,8 +18,10 @@ import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { UserDto } from '../auth/dto/user.dto';
 import { Role } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('modules')
+@ApiTags('Modules')
 export class ModulesController {
   constructor(
     private readonly modulesService: ModulesService,

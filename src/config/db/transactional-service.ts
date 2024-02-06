@@ -24,7 +24,33 @@ export class TransactionalService {
         return await cb();
       });
       await queryRunner.commitTransaction();
-      return;
+      return result;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * Runs the given operation in a transaction and makes sure to rollback after everything is done.
+   * @param cb Callback to execute in transaction
+   * @returns The result of the callback
+   */
+  async runForTest<T>(cb: () => T): Promise<T> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const entityManager = queryRunner.manager;
+
+    try {
+      const result = await this.als.run({ entityManager }, async () => {
+        return await cb();
+      });
+      await queryRunner.rollbackTransaction();
+      return result;
     } catch (e) {
       await queryRunner.rollbackTransaction();
       throw e;

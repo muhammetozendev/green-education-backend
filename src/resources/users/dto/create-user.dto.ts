@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   Length,
+  ValidateIf,
 } from 'class-validator';
 import { RoleEnum } from 'src/resources/auth/enums/role.enum';
 
@@ -31,6 +32,6 @@ export class CreateUserDto {
   role: RoleEnum;
 
   @IsNumber()
-  @IsOptional()
-  organizationId?: number;
+  @ValidateIf((o) => o.role === RoleEnum.USER)
+  organizationId: number;
 }

@@ -34,3 +34,7 @@ services:
       - POSTGRES_DB=green_education
     networks:
       - green_app
+
+networks:
+  green_app:
+    driver: bridge

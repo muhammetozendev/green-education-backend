@@ -22,6 +22,8 @@ services:
       - ./db:/var/lib/mysql
     depends_on:
       - db
+    networks:
+      - green_app
   db:
     image: postgres
     container_name: green_edu_postgres
@@ -30,5 +32,5 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=green_education
-    ports:
-      - "5432:5432"
+    networks:
+      - green_app

@@ -18,7 +18,11 @@ export class ModulesService {
   ) {}
 
   findAllModules() {
-    return this.modulesRepository.find();
+    return this.modulesRepository.find({
+      order: {
+        number: 'ASC',
+      },
+    });
   }
 
   findModulesAndProgressByOrganization(user: UserDto) {

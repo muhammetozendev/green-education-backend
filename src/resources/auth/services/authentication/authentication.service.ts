@@ -45,21 +45,18 @@ export class AuthenticationService {
       throw new UnauthorizedException('Authentication failed');
     }
 
-    // Generate tokens
-    const sessionId = randomUUID();
-    const tokens = this.tokenService.generateTokens(user, sessionId);
-
-    // Create session
-    await this.sessionRepository.insert({
-      id: sessionId,
-      refreshToken: tokens.refreshToken,
-      issuedAt: new Date(),
-      isValid: true,
-      user: { id: user.id },
+    // Generate token
+    const accessToken = this.tokenService.generateAccessToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      lastName: user.lastName,
+      organizationId: user.organization.id,
+      role: user.role,
     });
 
     // Return tokens
-    return mapObject(LoginResDto, tokens);
+    return mapObject(LoginResDto, { accessToken });
   }
 
   async register(data: CreateUserDto): Promise<RegisterResDto> {

@@ -20,6 +20,7 @@ import { SlideProgress } from 'src/resources/progress/repositories/slide-progres
 import { SubmoduleProgress } from 'src/resources/progress/repositories/submodule-progress/submodule-progress.entity';
 import { Attempt } from 'src/resources/quizzes/repositories/attempt/attempt.entity';
 import { QuizProgress } from 'src/resources/progress/repositories/quiz-progress/quiz-progress.entity';
+import { AdvancedTransactionalService } from './db/advanced-transactional-service';
 
 const alsProvider: Provider = {
   provide: AsyncLocalStorage,
@@ -99,7 +100,7 @@ const alsProvider: Provider = {
       imports: [NestConfigModule.forFeature(dbConfig)],
     }),
   ],
-  providers: [alsProvider, TransactionalService],
+  providers: [alsProvider, TransactionalService, AdvancedTransactionalService],
   exports: [alsProvider, TransactionalService],
 })
 export class AppConfigModule {}

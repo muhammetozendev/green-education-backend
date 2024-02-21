@@ -51,7 +51,7 @@ export class AuthenticationService {
       email: user.email,
       name: user.name,
       lastName: user.lastName,
-      organizationId: user.organization.id,
+      organizationId: user.organization?.id,
       role: user.role,
     });
 
